@@ -31,6 +31,9 @@ apt-get install libgdiplus
 EPPlus-A .NET Spreadsheet API
 
 Changes
+4.5.3.4
+* Modify ExcelSparkline to support named data range.
+
 4.5.3.3
 * Support for .NET Standard 2.1.
 
