@@ -38,7 +38,18 @@ namespace EPPlusSamples
 {
 	class Sample_Main
 	{
-		static void Main(string[] args)
+        //static void Main(string[] args)
+        //{
+        //    //Set the output directory to the SampleApp folder where the app is running from. 
+        //    Utils.OutputDir = new DirectoryInfo($"{AppDomain.CurrentDomain.BaseDirectory}SampleApp");
+        //    //Sample 17 - Shows how to add sparkline charts.
+        //    Console.WriteLine("Running sample 17-NamedRange data Sparklines");
+        //    Sample17.RunSample17();
+        //    Console.WriteLine("Sample 17 created {0}", Utils.OutputDir.Name);
+        //    Console.WriteLine();
+        //}
+
+        static void Main(string[] args)
 		{
 			try
 			{
@@ -159,6 +170,12 @@ namespace EPPlusSamples
                 Console.WriteLine("Running sample 16-Sparklines");
                 Sample16.RunSample16();
                 Console.WriteLine("Sample 16 created {0}", Utils.OutputDir.Name);
+                Console.WriteLine();
+
+                //Sample 17 - Shows how to add sparkline charts with NamedRange data.
+                Console.WriteLine("Running sample 17-NamedRange data Sparklines");
+                Sample17.RunSample17();
+                Console.WriteLine("Sample 17 created {0}", Utils.OutputDir.Name);
                 Console.WriteLine();
 
                 //Sample FormulaCalc - Shows how to calculate formulas in the workbook.

@@ -162,6 +162,92 @@ namespace OfficeOpenXml.Sparkline
             return group;
         }
 
+        /// <summary>
+        /// Adds a new sparklinegroup to the collection
+        /// </summary>
+        /// <param name="type">Type of sparkline</param>
+        /// <param name="locationRange">The location of the sparkline group. The range must have one row or column and must match the number of rows/columns in the datarange</param>
+        /// <param name="dataRange">The data for the sparkline group</param>
+        /// <returns></returns>
+        public ExcelSparklineGroup Add(eSparklineType type, ExcelAddressBase locationRange, ExcelNamedRange dataRange)
+        {
+            return Add(type, locationRange, new List<ExcelNamedRange>() { dataRange });
+        }
+
+        /// <summary>
+        /// Adds a new sparklinegroup to the collection
+        /// </summary>
+        /// <param name="type">Type of sparkline</param>
+        /// <param name="locationRange">The location of the sparkline group. The range must have one row or column and must match the number of rows/columns in the datarange</param>
+        /// <param name="dataRange">The data for the sparkline group</param>
+        /// <returns></returns>
+        public ExcelSparklineGroup Add(eSparklineType type, ExcelAddressBase locationRange, List<ExcelNamedRange> dataRange)
+        {
+            if (locationRange.Rows == 1)
+            {
+                if (locationRange.Columns == dataRange.Count)
+                {
+                    return AddGroup(type, locationRange, dataRange);
+                }
+                else
+                {
+                    throw (new ArgumentException("dataRange is not valid. dataRange count must match number of columns in locationRange"));
+                }
+            }
+            else if (locationRange.Columns == 1)
+            {
+                if (locationRange.Rows == dataRange.Count)
+                {
+                    return AddGroup(type, locationRange, dataRange);
+                }
+                else
+                {
+                    throw (new ArgumentException("dataRange is not valid. dataRange count must match number of rows in locationRange"));
+                }
+            }
+            else
+            {
+                throw (new ArgumentException("locationRange is not valid. Range must be one Column or Row only"));
+            }
+        }
+
+        private ExcelSparklineGroup AddGroup(eSparklineType type, ExcelAddressBase locationRange, List<ExcelNamedRange> dataRange)
+        {
+            var group = NewSparklineGroup();
+            group.Type = type;
+            var row = locationRange._fromRow;
+            var col = locationRange._fromCol;
+
+            var cells = (locationRange._fromRow == locationRange._toRow ? locationRange._toCol - locationRange._fromCol : locationRange._toRow - locationRange._fromRow) + 1;
+            var cell = 0;
+
+            while (cell < cells)
+            {
+                var f = new ExcelCellAddress(row, col);
+                var sqref = dataRange[cell];
+                group.Sparklines.Add(f, sqref.WorkSheet, sqref);
+                cell++;
+                if (locationRange._fromRow == locationRange._toRow)
+                {
+                    col++;
+                }
+                else
+                {
+                    row++;
+                }
+            }
+
+            group.ColorSeries.Rgb = "FF376092";
+            group.ColorNegative.Rgb = "FFD00000";
+            group.ColorMarkers.Rgb = "FFD00000";
+            group.ColorAxis.Rgb = "FF000000";
+            group.ColorFirst.Rgb = "FFD00000";
+            group.ColorLast.Rgb = "FFD00000";
+            group.ColorHigh.Rgb = "FFD00000";
+            group.ColorLow.Rgb = "FFD00000";
+            return group;
+        }
+
         private ExcelSparklineGroup NewSparklineGroup()
         {
             var xh = new XmlHelperInstance(_ws.NameSpaceManager, _ws.WorksheetXml); //SelectSingleNode("/d:worksheet", _ws.NameSpaceManager)

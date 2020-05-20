@@ -130,14 +130,43 @@ namespace OfficeOpenXml.Sparkline
         {
             get
             {
-                if(Sparklines.Count==0)
+                if (Sparklines.Count == 0)
                 {
                     return null;
                 }
                 else
                 {
-                    var ws = _ws.Workbook.Worksheets[Sparklines[0].RangeAddress.WorkSheet];
-                    return _ws.Cells[Sparklines[0].RangeAddress._fromRow, Sparklines[0].RangeAddress._fromCol, Sparklines[Sparklines.Count - 1].RangeAddress._toRow, Sparklines[Sparklines.Count - 1].RangeAddress._toCol];
+                    //var ws = _ws.Workbook.Worksheets[Sparklines[0].RangeAddress.WorkSheet];
+                    //return _ws.Cells[Sparklines[0].RangeAddress._fromRow, Sparklines[0].RangeAddress._fromCol, Sparklines[Sparklines.Count - 1].RangeAddress._toRow, Sparklines[Sparklines.Count - 1].RangeAddress._toCol];
+
+                    
+                    int fromRow, fromCol, toRow, toCol;
+                    ExcelAddressBase firstAddress = Sparklines[0].GetRangeAddress(_ws.Names);
+                    if (firstAddress.Addresses?.Count > 0) 
+                    {
+                        //ExcelNamedRange usually has multiple RangeAddress.
+                        fromRow = firstAddress.Addresses[0]._fromRow;
+                        fromCol = firstAddress.Addresses[0]._fromCol;
+                    }
+                    else
+                    {
+                        fromRow = firstAddress._fromRow;
+                        fromCol = firstAddress._fromCol;
+                    }
+
+                    ExcelAddressBase lastAddress = Sparklines[Sparklines.Count - 1].GetRangeAddress(_ws.Names);
+                    if (lastAddress.Addresses?.Count > 0)
+                    {
+                        //ExcelNamedRange usually has multiple RangeAddress.
+                        toRow = lastAddress.Addresses[lastAddress.Addresses.Count - 1]._toRow;
+                        toCol = lastAddress.Addresses[lastAddress.Addresses.Count - 1]._toCol;
+                    }
+                    else
+                    {
+                        toRow = lastAddress._toRow;
+                        toCol = lastAddress._toCol;
+                    }
+                    return _ws.Cells[fromRow, fromCol, toRow, toCol];
                 }
             }
         }

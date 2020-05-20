@@ -19,17 +19,38 @@ namespace OfficeOpenXml.Sparkline
         /// <summary>
         /// The datarange
         /// </summary>
-        public ExcelAddressBase RangeAddress
+        internal ExcelAddressBase RangeAddress
         {
-            get
+            /*get
             {
                 return new ExcelAddressBase(GetXmlNodeString(_fPath));
             }
-            internal set
+            internal*/
+            set
             {
-                SetXmlNodeString(_fPath, value.FullAddress);
+                //SetXmlNodeString(_fPath, value.FullAddress);
+
+                if (value is ExcelNamedRange)
+                    SetXmlNodeString(_fPath, (value as ExcelNamedRange).Name);
+                else
+                    SetXmlNodeString(_fPath, value.FullAddress);
             }
         }
+
+        /// <summary>
+        /// Get the data range address.
+        /// </summary>
+        /// <param name="namedRangeCol">workbook or worksheet Names</param>
+        /// <returns></returns>
+        internal ExcelAddressBase GetRangeAddress(ExcelNamedRangeCollection namedRangeCol)
+        {
+            string addrOrName = GetXmlNodeString(_fPath);
+            if (namedRangeCol.ContainsKey(addrOrName)) //ExcelNamedRange
+                return namedRangeCol[addrOrName];
+            else
+                return new ExcelAddressBase(addrOrName);
+        }
+
         const string _sqrefPath = "xm:sqref";
         /// <summary>
         /// Location of the sparkline
@@ -47,7 +68,8 @@ namespace OfficeOpenXml.Sparkline
         }
         public override string ToString()
         {
-            return Cell.Address + ", " +RangeAddress.Address;
+            //return Cell.Address + ", " +RangeAddress.Address;
+            return Cell.Address + ", " + GetXmlNodeString(_fPath);
         }
     }
 }
