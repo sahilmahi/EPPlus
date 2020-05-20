@@ -1,4 +1,4 @@
-# EPPlus 4.5.3.3
+# Continuous Version of EPPlus Free Edition 4.5.3.3
 
 ## Announcement: This is the last version of EPPlus under the LGPL License
 EPPlus will from version 5 be licensed under the [Polyform Noncommercial 1.0.0]( https://polyformproject.org/licenses/noncommercial/1.0.0/) license.  
@@ -31,7 +31,7 @@ apt-get install libgdiplus
 EPPlus-A .NET Spreadsheet API
 
 Changes
-4.5.3.4
+4.5.3.7
 * Modify ExcelSparkline to support named data range.
 
 4.5.3.3
