@@ -1,4 +1,7 @@
 # EPPlus
+**The [JanKallman/EPPlus](https://github.com/JanKallman/EPPlus) repository has been archived by the owner. So I fork it to my repository and continue to maintain the source code.**
+
+---
 **This repository has moved to https://github.com/EPPlusSoftware/EPPlus.** 
 
 **The code in this archive represents the final version of EPPlus under LGPL. There will be no more activity here.**  
