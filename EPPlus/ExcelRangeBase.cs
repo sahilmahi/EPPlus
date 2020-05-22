@@ -1432,6 +1432,24 @@ namespace OfficeOpenXml
                 return _worksheet;
             }
         }
+        ///// <summary>
+        ///// Address including sheetname
+        ///// </summary>
+        //public new string FullAddress
+        //{
+        //    get
+        //    {
+        //        string fullAddress = GetFullAddress(_worksheet.Name, _address);
+        //        if (Addresses != null)
+        //        {
+        //            foreach (var a in Addresses)
+        //            {
+        //                fullAddress += "," + GetFullAddress(_worksheet.Name, a.Address); ;
+        //            }
+        //        }
+        //        return fullAddress;
+        //    }
+        //}
         /// <summary>
         /// Address including sheetname
         /// </summary>
@@ -1439,14 +1457,18 @@ namespace OfficeOpenXml
         {
             get
             {
-                string fullAddress = GetFullAddress(_worksheet.Name, _address);
-                if (Addresses != null)
+                string fullAddress = string.Empty;
+                if (Addresses?.Count > 0) //Contains multiple range.
                 {
-                    foreach (var a in Addresses)
+                    fullAddress = GetFullAddress(_worksheet.Name, Addresses[0].Address);
+                    for (int i = 1; i < Addresses.Count; i++)
                     {
-                        fullAddress += "," + GetFullAddress(_worksheet.Name, a.Address); ;
+                        fullAddress += "," + GetFullAddress(_worksheet.Name, Addresses[i].Address);
                     }
                 }
+                else
+                    fullAddress = GetFullAddress(_worksheet.Name, _address);
+
                 return fullAddress;
             }
         }

@@ -93,7 +93,10 @@ namespace EPPlusSamples
                 sparklineLine.Negative = true;
                 sparklineLine.ColorNegative.SetColor(Color.Blue);
 
-                //var dataRng = sparklineLine.DataRange;
+                //var dataRng1 = sparklineLine.DataRange;
+                //ws.InsertRow(1, 10);
+                //ws.InsertColumn(1, 10);
+                //var dataRng2 = sparklineLine.DataRange;
 
                 package.SaveAs(Utils.GetFileInfo("Sample17.xlsx"));
             }

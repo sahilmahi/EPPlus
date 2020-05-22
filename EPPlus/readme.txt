@@ -31,8 +31,12 @@ apt-get install libgdiplus
 EPPlus-A .NET Spreadsheet API
 
 Changes
+4.5.3.8
+* Fixed the bug of address of ExcelNamedRange in ExcelNamedRangeCollection and Cell of ExcelSparkline in ExcelNamedRangeCollection when inserting row or column in ExcelWorksheet.
+
 4.5.3.7
 * Modify ExcelSparkline to support named data range.
+----------------------------------------------------
 
 4.5.3.3
 * Support for .NET Standard 2.1.

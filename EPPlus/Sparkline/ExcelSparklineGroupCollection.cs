@@ -159,6 +159,7 @@ namespace OfficeOpenXml.Sparkline
             group.ColorLast.Rgb = "FFD00000";
             group.ColorHigh.Rgb = "FFD00000";
             group.ColorLow.Rgb = "FFD00000";
+            _lst.Add(group);
             return group;
         }
 
@@ -245,7 +246,111 @@ namespace OfficeOpenXml.Sparkline
             group.ColorLast.Rgb = "FFD00000";
             group.ColorHigh.Rgb = "FFD00000";
             group.ColorLow.Rgb = "FFD00000";
+            _lst.Add(group);
             return group;
+        }
+
+        internal void Insert(int rowFrom, int colFrom, int rows, int cols)
+        {
+            foreach (var slg in _ws.SparklineGroups)
+            {
+                if (slg.DateAxis)
+                {
+                    //DateAxisRange insert rows.
+                    var address = slg.DateAxisRange;
+                    if (rowFrom <= address.Start.Row)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row + rows, address.Start.Column, address.End.Row + rows, address.End.Column);
+                        slg.DateAxisRange = _ws.Cells[BuildNewAddress(address, newAddress)];
+                    }
+                    else if (rowFrom <= address.End.Row && address.End.Row + rows <= ExcelPackage.MaxRows)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column, address.End.Row + rows, address.End.Column);
+                        slg.DateAxisRange = _ws.Cells[BuildNewAddress(address, newAddress)];
+                    }
+                    //DateAxisRange insert cols.
+                    address = slg.DateAxisRange;
+                    if (colFrom <= address.Start.Column)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column + cols, address.End.Row, address.End.Column + cols);
+                        slg.DateAxisRange = _ws.Cells[BuildNewAddress(address, newAddress)];
+                    }
+                    else if (colFrom <= address.End.Column && address.End.Column + cols < ExcelPackage.MaxColumns)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column, address.End.Row, address.End.Column + cols);
+                        slg.DateAxisRange = _ws.Cells[BuildNewAddress(address, newAddress)];
+                    }
+                }
+                foreach (var sl in slg.Sparklines)
+                {
+                    InsertRows(rowFrom, rows, sl);
+                    InsertColumns(colFrom, cols, sl);
+                }
+            }
+        }
+
+        private void InsertRows(int rowFrom, int rows, ExcelSparkline sl)
+        {
+            if (rows > 0)
+            {
+                if (sl.Cell.Row >= rowFrom)
+                {
+                    sl.Cell = new ExcelCellAddress(sl.Cell.Row + rows, sl.Cell.Column);
+                }
+
+                var address = sl.GetRangeAddress(_ws.Names);
+                if (!(address is ExcelNamedRange))
+                {
+                    if (rowFrom <= address.Start.Row)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row + rows, address.Start.Column, address.End.Row + rows, address.End.Column);
+                        var ttt = new ExcelAddress(BuildNewAddress(address, newAddress));
+                        sl.RangeAddress = ttt;
+                    }
+                    else if (rowFrom <= address.End.Row && address.End.Row + rows <= ExcelPackage.MaxRows)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column, address.End.Row + rows, address.End.Column);
+                        sl.RangeAddress = new ExcelAddress(BuildNewAddress(address, newAddress));
+                    }
+                }
+            }
+        }
+
+        private void InsertColumns(int colFrom, int cols, ExcelSparkline sl)
+        {
+            if (cols > 0)
+            {
+                if (sl.Cell.Column >= colFrom)
+                {
+                    sl.Cell = new ExcelCellAddress(sl.Cell.Row, sl.Cell.Column + cols);
+                }
+
+                var address = sl.GetRangeAddress(_ws.Names);
+                if (!(address is ExcelNamedRange))
+                {
+                    if (colFrom <= address.Start.Column)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column + cols, address.End.Row, address.End.Column + cols);
+                        sl.RangeAddress = new ExcelAddress(BuildNewAddress(address, newAddress));
+                    }
+                    else if (colFrom <= address.End.Column && address.End.Column + cols < ExcelPackage.MaxColumns)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(address.Start.Row, address.Start.Column, address.End.Row, address.End.Column + cols);
+                        sl.RangeAddress = new ExcelAddress(BuildNewAddress(address, newAddress));
+                    }
+                }
+            }
+        }
+
+        private static string BuildNewAddress(ExcelAddressBase namedRange, string newAddress)
+        {
+            if (namedRange.FullAddress.Contains("!"))
+            {
+                var worksheet = namedRange.FullAddress.Split('!')[0];
+                worksheet = worksheet.Trim('\'');
+                newAddress = ExcelCellBase.GetFullAddress(worksheet, newAddress);
+            }
+            return newAddress;
         }
 
         private ExcelSparklineGroup NewSparklineGroup()

@@ -179,19 +179,57 @@ namespace OfficeOpenXml
                 }
             }
         }
+        //private void InsertColumns(int colFrom, int cols, ExcelNamedRange namedRange)
+        //{
+        //    if (colFrom > 0)
+        //    {
+        //        if (colFrom <= namedRange.Start.Column)
+        //        {
+        //            var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column +cols, namedRange.End.Row, namedRange.End.Column + cols);
+        //            namedRange.Address = BuildNewAddress(namedRange, newAddress);
+        //        }
+        //        else if (colFrom <= namedRange.End.Column && namedRange.End.Column + cols < ExcelPackage.MaxColumns)
+        //        {
+        //            var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row, namedRange.End.Column + cols);
+        //            namedRange.Address = BuildNewAddress(namedRange, newAddress);
+        //        }
+        //    }
+        //}
+
         private void InsertColumns(int colFrom, int cols, ExcelNamedRange namedRange)
         {
             if (colFrom > 0)
             {
-                if (colFrom <= namedRange.Start.Column)
+                if (namedRange.Addresses?.Count > 0) //Contains multiple ranges
                 {
-                    var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column +cols, namedRange.End.Row, namedRange.End.Column + cols);
-                    namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    foreach (var rng in namedRange.Addresses)
+                    {
+                        if (colFrom <= rng.Start.Column)
+                        {
+                            var newAddress = ExcelCellBase.GetAddress(rng.Start.Row, rng.Start.Column + cols, rng.End.Row, rng.End.Column + cols);
+                            rng.Address = BuildNewAddress(namedRange, newAddress);
+                        }
+                        else if (colFrom <= rng.End.Column && rng.End.Column + cols < ExcelPackage.MaxColumns)
+                        {
+                            var newAddress = ExcelCellBase.GetAddress(rng.Start.Row, rng.Start.Column, rng.End.Row, rng.End.Column + cols);
+                            rng.Address = BuildNewAddress(namedRange, newAddress);
+                        }
+                    }
+
+                    namedRange.Address = namedRange.FullAddress;
                 }
-                else if (colFrom <= namedRange.End.Column && namedRange.End.Column + cols < ExcelPackage.MaxColumns)
+                else
                 {
-                    var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row, namedRange.End.Column + cols);
-                    namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    if (colFrom <= namedRange.Start.Column)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column + cols, namedRange.End.Row, namedRange.End.Column + cols);
+                        namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    }
+                    else if (colFrom <= namedRange.End.Column && namedRange.End.Column + cols < ExcelPackage.MaxColumns)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row, namedRange.End.Column + cols);
+                        namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    }
                 }
             }
         }
@@ -207,19 +245,57 @@ namespace OfficeOpenXml
             return newAddress;
         }
 
+        //private void InsertRows(int rowFrom, int rows, ExcelNamedRange namedRange)
+        //{
+        //    if (rows > 0)
+        //    {
+        //        if (rowFrom <= namedRange.Start.Row)
+        //        {
+        //            var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row + rows, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
+        //            namedRange.Address = BuildNewAddress(namedRange, newAddress); 
+        //        }
+        //        else if (rowFrom <= namedRange.End.Row && namedRange.End.Row+rows <= ExcelPackage.MaxRows)
+        //        {
+        //            var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
+        //            namedRange.Address = BuildNewAddress(namedRange, newAddress); 
+        //        }
+        //    }
+        //}
+
         private void InsertRows(int rowFrom, int rows, ExcelNamedRange namedRange)
         {
             if (rows > 0)
             {
-                if (rowFrom <= namedRange.Start.Row)
+                if (namedRange.Addresses?.Count > 0) //Contains multiple ranges
                 {
-                    var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row + rows, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
-                    namedRange.Address = BuildNewAddress(namedRange, newAddress); 
+                    foreach (var rng in namedRange.Addresses)
+                    {
+                        if (rowFrom <= rng.Start.Row)
+                        {
+                            var newAddress = ExcelCellBase.GetAddress(rng.Start.Row + rows, rng.Start.Column, rng.End.Row + rows, rng.End.Column);
+                            rng.Address = BuildNewAddress(namedRange, newAddress);
+                        }
+                        else if (rowFrom <= rng.End.Row && rng.End.Row + rows <= ExcelPackage.MaxRows)
+                        {
+                            var newAddress = ExcelCellBase.GetAddress(rng.Start.Row, rng.Start.Column, rng.End.Row + rows, rng.End.Column);
+                            rng.Address = BuildNewAddress(namedRange, newAddress);
+                        }
+                    }
+
+                    namedRange.Address = namedRange.FullAddress;
                 }
-                else if (rowFrom <= namedRange.End.Row && namedRange.End.Row+rows <= ExcelPackage.MaxRows)
+                else
                 {
-                    var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
-                    namedRange.Address = BuildNewAddress(namedRange, newAddress); 
+                    if (rowFrom <= namedRange.Start.Row)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row + rows, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
+                        namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    }
+                    else if (rowFrom <= namedRange.End.Row && namedRange.End.Row + rows <= ExcelPackage.MaxRows)
+                    {
+                        var newAddress = ExcelCellBase.GetAddress(namedRange.Start.Row, namedRange.Start.Column, namedRange.End.Row + rows, namedRange.End.Column);
+                        namedRange.Address = BuildNewAddress(namedRange, newAddress);
+                    }
                 }
             }
         }

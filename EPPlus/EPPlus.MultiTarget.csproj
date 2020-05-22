@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net35;net40</TargetFrameworks>
-    <AssemblyVersion>4.5.3.7</AssemblyVersion>
-    <FileVersion>4.5.3.7</FileVersion>
-    <Version>4.5.3.7</Version>
+    <AssemblyVersion>4.5.3.8</AssemblyVersion>
+    <FileVersion>4.5.3.8</FileVersion>
+    <Version>4.5.3.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageIcon>icon.jpg</PackageIcon>
     <PackageLicenseUrl></PackageLicenseUrl>
@@ -54,6 +54,9 @@
 		EPPlus-A .NET Spreadsheet API
 
 		Changes
+		4.5.3.8
+		* Fixed the bug of address of ExcelNamedRange in ExcelNamedRangeCollection and Cell of ExcelSparkline in ExcelNamedRangeCollection when inserting row or column in ExcelWorksheet.
+
 		4.5.3.7
 		* Modify ExcelSparkline to support named data range.
 
