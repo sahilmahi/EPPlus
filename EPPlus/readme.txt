@@ -1,6 +1,11 @@
 # Continuous Version of EPPlus Free Edition 4.5.3.3
+# EPPlus Free Edition
+# Continuous Version of EPPlus Free Edition 4.5.3.3
+# LGPL License continue
+		
+# Note: 4.5.3.3 is the last official version of EPPlus under the LGPL License, now it has been archived.
 
-## Announcement: This is the last version of EPPlus under the LGPL License
+## Official Announcement: This is the last version of EPPlus under the LGPL License
 EPPlus will from version 5 be licensed under the [Polyform Noncommercial 1.0.0]( https://polyformproject.org/licenses/noncommercial/1.0.0/) license.  
 With the new license EPPlus is still free to use in some cases, but will require a commercial license to be used in a commercial business.  
 More information on the license change on [our website]( https://www.epplussoftware.com/Home/LgplToPolyform)
