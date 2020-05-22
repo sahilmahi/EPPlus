@@ -17,7 +17,7 @@
     <AssemblyName>EPPlusFree</AssemblyName>
     <RootNamespace>EPPlus</RootNamespace>
     <RepositoryUrl></RepositoryUrl>
-    <PackageTags>Excel ooxml</PackageTags>
+    <PackageTags>Excel Spreadsheet ooxml</PackageTags>
     <Copyright>Rimland 2020</Copyright>
     <PackageReleaseNotes>
 		# Continuous Version of EPPlus Free Edition 4.5.3.3
