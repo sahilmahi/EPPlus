@@ -16,16 +16,21 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v1.1.1
+        with:
+          msbuild-architecture: x64
       - name: Install SHFB
         uses: Shane32/setup-SHFB@main
         with:
           version: 2022.8.14.1
       - name: Build project
         run: dotnet build -c Release
+#      - name: Build documentation
+#        working-directory: Doc
+#        run: dotnet build -c Release
       - name: Build documentation
         working-directory: Doc
-        run: dotnet build -c Release
+        run: msbuild EPPlusDoc.sln -t:rebuild -verbosity:diag -property:Configuration=Release
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
