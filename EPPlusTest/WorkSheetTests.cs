@@ -2591,7 +2591,7 @@ namespace EPPlusTest
                 var formula = sheet1.Cells[2, 2].Formula;
                 var validFormulas = new string[] { "'Sheet2'!C13", "Sheet2!C13" };
                 var isValid = validFormulas.Any(f => string.Equals(f, formula, StringComparison.OrdinalIgnoreCase));
-                Assert.IsTrue(isValid, "Expected: 'Sheet2'!C13 or Sheet2!C13");
+                Assert.IsTrue(isValid, $"Expected: \"'Sheet2'!C13\" or \"Sheet2!C13\" but was \"{formula}\"");
                 Assert.AreEqual("Hello, world!", sheet1.Cells[2, 2].Value);
             }
         }
