@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{D805F05D-0E1C-4D8D-9DF8-8506C3ECD4BD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\test-code.yml = .github\workflows\test-code.yml
+		.github\workflows\test-documentation.yml = .github\workflows\test-documentation.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

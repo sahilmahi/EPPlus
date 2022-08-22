@@ -1,0 +1,25 @@
+name: Test documentation
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  buildcheck:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Install SHFB
+        uses: Bassman2/setup-SHFB@v1
+        with:
+          version: v2022.8.14.1
+      - name: Build documentation
+        working-directory: Doc
+        run: dotnet build
+      - name: Upload build artifacts
+        uses: action/upload-artifact@v3
+        with:
+          name: docs
+          path: Doc/Help
