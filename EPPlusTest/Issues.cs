@@ -2318,11 +2318,10 @@ namespace EPPlusTest
                     ws = _pck.Workbook.Worksheets["DateFormat"];
                     var pCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
                     System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("sv-Se");
-#if NET5_0_OR_GREATER
-                    Assert.AreEqual(ws.Cells["A1"].Text, "måndag 31 december 2018");
-#else
-                    Assert.AreEqual(ws.Cells["A1"].Text, "den 31 december 2018");
-#endif
+                    var cellText = ws.Cells["A1"].Text;
+                    var acceptable = new string[] { "måndag 31 december 2018", "den 31 december 2018" };
+                    var valid = acceptable.Contains(cellText);
+                    Assert.IsTrue(valid, $"Unacceptable text: '{cellText}'");
                     Assert.AreEqual(ws.GetValue<DateTime>(1, 1), new DateTime(2018, 12, 31));
                     System.Threading.Thread.CurrentThread.CurrentCulture = pCulture;
                     tcs.SetResult(true);

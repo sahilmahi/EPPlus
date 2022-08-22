@@ -2588,7 +2588,10 @@ namespace EPPlusTest
                 sheet2.InsertRow(3, 10);
                 package.Workbook.Calculate();
                 Assert.AreEqual("Hello, world!", sheet2.Cells[13, 3].Value);
-                Assert.AreEqual("'Sheet2'!C13", sheet1.Cells[2, 2].Formula, true);
+                var formula = sheet1.Cells[2, 2].Formula;
+                var validFormulas = new string[] { "'Sheet2'!C13", "Sheet2!C13" };
+                var isValid = validFormulas.Any(f => string.Equals(f, formula, StringComparison.OrdinalIgnoreCase));
+                Assert.IsTrue(isValid, "Expected: 'Sheet2'!C13 or Sheet2!C13");
                 Assert.AreEqual("Hello, world!", sheet1.Cells[2, 2].Value);
             }
         }
