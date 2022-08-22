@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+      - name: Setup .NET Core SDKs
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
       - name: Install SHFB
         uses: Bassman2/setup-SHFB@v1
         with:
