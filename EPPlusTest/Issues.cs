@@ -18,6 +18,7 @@ using System.Dynamic;
 using System.Globalization;
 using OfficeOpenXml.Drawing;
 using OfficeOpenXml.FormulaParsing;
+using System.Threading.Tasks;
 
 namespace EPPlusTest
 {
@@ -28,6 +29,7 @@ namespace EPPlusTest
     [TestClass]
     public class Issues : TestBase
     {
+        /*
         [TestInitialize]
         public void Initialize()
         {
@@ -40,6 +42,8 @@ namespace EPPlusTest
                 Directory.CreateDirectory(@"c:\Temp\bug");
             }
         }
+        */
+
         [TestMethod, Ignore]
         public void Issue15052()
         {
@@ -90,7 +94,8 @@ namespace EPPlusTest
         [TestMethod]
         public void Issue15056()
         {
-            var path = @"C:\temp\output.xlsx";
+            //var path = @"C:\temp\output.xlsx";
+            var path = "output.xlsx";
             var file = new FileInfo(path);
             file.Delete();
             using (var ep = new ExcelPackage(file))
@@ -199,7 +204,8 @@ namespace EPPlusTest
             ws.Cells["A1:H1"].Style.Font.Size = 14;
             ws.Cells["A1:H1"].Style.Font.Color.SetColor(Color.Red);
             ws.Cells["A1:H1"].Style.Font.Bold = true;
-            p.SaveAs(new FileInfo(@"c:\temp\merge.xlsx"));
+            //p.SaveAs(new FileInfo(@"c:\temp\merge.xlsx"));
+            p.SaveAs(new FileInfo(@"merge.xlsx"));
         }
         [TestMethod]
         public void Issue15141()
@@ -267,7 +273,7 @@ namespace EPPlusTest
             var dest = ws.Cells[1, column + columns, ws.Dimension.End.Row, ws.Dimension.End.Column + columns];
             source.Copy(dest);
         }
-#if !Core
+
         [TestMethod]
         public void Issue15123()
         {
@@ -305,7 +311,7 @@ namespace EPPlusTest
                 Assert.AreNotEqual(ws.Cells[2, 5].Text, "");
             }
         }
-#endif
+
         [TestMethod]
         public void Issue15128()
         {
@@ -317,7 +323,8 @@ namespace EPPlusTest
             ws.Cells["C1"].Value = "Test";
             ws.Cells["A1:B2"].Copy(ws.Cells["C1"]);
             ws.Cells["B2"].Copy(ws.Cells["D1"]);
-            p.SaveAs(new FileInfo(@"c:\temp\bug\copy.xlsx"));
+            //p.SaveAs(new FileInfo(@"c:\temp\bug\copy.xlsx"));
+            p.SaveAs(new FileInfo(@"copy.xlsx"));
         }
 
         [TestMethod]
@@ -757,8 +764,9 @@ namespace EPPlusTest
         /**** Pivottable issue ****/
         public void Issue()
         {
-            DirectoryInfo outputDir = new DirectoryInfo(@"c:\ExcelPivotTest");
-            FileInfo MyFile = new FileInfo(@"c:\temp\bug\pivottable.xlsx");
+            //DirectoryInfo outputDir = new DirectoryInfo(@"c:\ExcelPivotTest");
+            //FileInfo MyFile = new FileInfo(@"c:\temp\bug\pivottable.xlsx");
+            FileInfo MyFile = new FileInfo(@"pivottable.xlsx");
             LoadData(MyFile);
             BuildPivotTable1(MyFile);
             BuildPivotTable2(MyFile);
@@ -1014,7 +1022,8 @@ namespace EPPlusTest
                 var r = ws.Cells["A1"];
                 r.RichText.Text = "Cell 1";
                 r["A2"].RichText.Add("Cell 2");
-                p.SaveAs(new FileInfo(@"c:\temp\rt.xlsx"));
+                //p.SaveAs(new FileInfo(@"c:\temp\rt.xlsx"));
+                p.SaveAs(new FileInfo(@"rt.xlsx"));
             }
         }
         [TestMethod]
@@ -1054,7 +1063,8 @@ namespace EPPlusTest
                 workSheet.InsertColumn(2, 2, 9);
                 workSheet.Column(45).Width = 0;
 
-                p.SaveAs(new FileInfo(@"c:\temp\styleerror.xlsx"));
+                //p.SaveAs(new FileInfo(@"c:\temp\styleerror.xlsx"));
+                p.SaveAs(new FileInfo(@"styleerror.xlsx"));
             }
         }
         [TestMethod]
@@ -1070,7 +1080,8 @@ namespace EPPlusTest
                 cell.RichText.Add("tata");
                 cell.RichText[1].Bold = false;
                 cell.RichText[1].Color = Color.Green;
-                p.SaveAs(new FileInfo(@"c:\temp\rtpreserve.xlsx"));
+                //p.SaveAs(new FileInfo(@"c:\temp\rtpreserve.xlsx"));
+                p.SaveAs(new FileInfo(@"rtpreserve.xlsx"));
             }
         }
         [TestMethod]
@@ -1082,7 +1093,8 @@ namespace EPPlusTest
                 var ws2 = p.Workbook.Worksheets.Add("ws2");
                 ws2.View.SelectedRange = "A1:B3 D12:D15";
                 ws2.View.ActiveCell = "D15";
-                p.SaveAs(new FileInfo(@"c:\temp\activeCell.xlsx"));
+                //p.SaveAs(new FileInfo(@"c:\temp\activeCell.xlsx"));
+                p.SaveAs(new FileInfo(@"activeCell.xlsx"));
             }
         }
         [TestMethod, Ignore]
@@ -1142,11 +1154,7 @@ namespace EPPlusTest
                 p.SaveAs(new FileInfo(path2));
 
                 // files are identical?
-#if (Core)
                 var md5 = System.Security.Cryptography.MD5.Create();
-#else
-                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-#endif
                 using (var fs1 = new FileStream(path1, FileMode.Open))
                 using (var fs2 = new FileStream(path2, FileMode.Open))
                 {
@@ -1732,6 +1740,7 @@ namespace EPPlusTest
                 var ws = p.Workbook.Worksheets.Add("i61");
                 ws.Cells["A1"].LoadFromDataTable(table1, true);
                 //p.SaveAs(new FileInfo(@"c:\temp\issue61.xlsx"));
+                p.SaveAs(new FileInfo(@"issue61.xlsx"));
             }
 
         }
@@ -1806,6 +1815,7 @@ namespace EPPlusTest
         [TestMethod, Ignore]
         public void Issue44()
         {
+            // note: do not change Thread.CurrentCulture on a thread pool thread
             System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("el-GR");
             using (ExcelPackage xlp = new ExcelPackage())
             {
@@ -2268,7 +2278,8 @@ namespace EPPlusTest
             Assert.AreEqual(18, boldStyle.Style.Font.Size);
             Assert.AreEqual(boldStyle.Style.Font.Color.Rgb, "FFFF0000");
 
-            pkg.SaveAs(new FileInfo(@"c:\temp\n.xlsx"));
+            //pkg.SaveAs(new FileInfo(@"c:\temp\n.xlsx"));
+            pkg.SaveAs(new FileInfo(@"n.xlsx"));
         }
         [TestMethod]
         public void Issue332()
@@ -2288,22 +2299,41 @@ namespace EPPlusTest
             Assert.IsNotNull(ws.Cells["A1"].Hyperlink);
         }
         [TestMethod]
-        public void Issuer246()
+        public async Task Issuer246()
         {
-            InitBase();
-            var pkg = OpenPackage("issue246.xlsx", true);
-            var ws = _pck.Workbook.Worksheets.Add("DateFormat");
-            ws.Cells["A1"].Value = 43465;
-            ws.Cells["A1"].Style.Numberformat.Format = @"[$-F800]dddd,\ mmmm\ dd,\ yyyy";
-            _pck.Save();
+            var tcs = new TaskCompletionSource<bool>();
+            // never change Thread.CurrentCulture on a task scheduler thread
+            var thread = new System.Threading.Thread(() =>
+            {
+                try
+                {
+                    InitBase();
+                    var pkg = OpenPackage("issue246.xlsx", true);
+                    var ws = _pck.Workbook.Worksheets.Add("DateFormat");
+                    ws.Cells["A1"].Value = 43465;
+                    ws.Cells["A1"].Style.Numberformat.Format = @"[$-F800]dddd,\ mmmm\ dd,\ yyyy";
+                    _pck.Save();
 
-            pkg = OpenPackage("issue246.xlsx");
-            ws = _pck.Workbook.Worksheets["DateFormat"];
-            var pCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("sv-Se");
-            Assert.AreEqual(ws.Cells["A1"].Text, "den 31 december 2018");
-            Assert.AreEqual(ws.GetValue<DateTime>(1, 1), new DateTime(2018, 12, 31));
-            System.Threading.Thread.CurrentThread.CurrentCulture = pCulture;
+                    pkg = OpenPackage("issue246.xlsx");
+                    ws = _pck.Workbook.Worksheets["DateFormat"];
+                    var pCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+                    System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("sv-Se");
+#if NET5_0_OR_GREATER
+                    Assert.AreEqual(ws.Cells["A1"].Text, "måndag 31 december 2018");
+#else
+                    Assert.AreEqual(ws.Cells["A1"].Text, "den 31 december 2018");
+#endif
+                    Assert.AreEqual(ws.GetValue<DateTime>(1, 1), new DateTime(2018, 12, 31));
+                    System.Threading.Thread.CurrentThread.CurrentCulture = pCulture;
+                    tcs.SetResult(true);
+                }
+                catch (Exception e)
+                {
+                    tcs.SetException(e);
+                }
+            });
+            thread.Start();
+            await tcs.Task;
         }
         [TestMethod]
         public void Issue347()
@@ -2394,9 +2424,9 @@ namespace EPPlusTest
             {
                 var ws = package.Workbook.Worksheets.Add("TextBug");
                 ws.Cells["A1"].Value = new DateTime(2019, 3, 7);
-                ws.Cells["A1"].Style.Numberformat.Format = "mm-dd-yy";
+                ws.Cells["A1"].Style.Numberformat.Format = "mm-dd-yy"; // culture specific predefined format
 
-                Assert.AreEqual("2019-03-07", ws.Cells["A1"].Text);
+                Assert.AreEqual(new DateTime(2019, 3, 7).ToShortDateString(), ws.Cells["A1"].Text);
             }
         }
         [TestMethod]

@@ -15,6 +15,7 @@ using System.Reflection;
 using OfficeOpenXml.Table;
 using System.Threading;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace EPPlusTest
 {
@@ -177,11 +178,16 @@ namespace EPPlusTest
                 Assert.AreEqual(ws.Cells["F5"].Style.Font.UnderLineType, ExcelUnderLineType.None);
                 Assert.AreEqual(ws.Cells["F5"].Style.Font.UnderLine, false);
 
-                Assert.AreEqual(ws.Cells["T20"].GetValue<string>(), 0.396180555555556d.ToString(CultureInfo.CurrentCulture));
+                Assert.AreEqual(ws.Cells["T20"].GetValue<string>(), 0.39618055555555554d.ToString(CultureInfo.CurrentCulture));
                 Assert.AreEqual(ws.Cells["T20"].GetValue<int>(), 0);
                 Assert.AreEqual(ws.Cells["T20"].GetValue<int?>(), 0);
+#if NETCOREAPP3_0_OR_GREATER
+                Assert.AreEqual(ws.Cells["T20"].GetValue<double>(), 0.39618055555555554d);
+                Assert.AreEqual(ws.Cells["T20"].GetValue<double?>(), 0.39618055555555554d);
+#else
                 Assert.AreEqual(ws.Cells["T20"].GetValue<double>(), 0.396180555555556d);
                 Assert.AreEqual(ws.Cells["T20"].GetValue<double?>(), 0.396180555555556d);
+#endif
                 Assert.AreEqual(ws.Cells["T20"].GetValue<decimal>(), 0.396180555555556m);
                 Assert.AreEqual(ws.Cells["T20"].GetValue<decimal?>(), 0.396180555555556m);
                 Assert.AreEqual(ws.Cells["T20"].GetValue<bool>(), true);
@@ -192,11 +198,16 @@ namespace EPPlusTest
                 Assert.AreEqual(ws.Cells["T20"].GetValue<TimeSpan?>(), new TimeSpan(693593, 9, 30, 30));
                 Assert.AreEqual(ws.Cells["T20"].Text, "09:30:30");
 
-                Assert.AreEqual(ws.Cells["T24"].GetValue<string>(), 1.39618055555556d.ToString(CultureInfo.CurrentCulture));
+                Assert.AreEqual(ws.Cells["T24"].GetValue<string>(), 1.3961805555555555d.ToString(CultureInfo.CurrentCulture));
                 Assert.AreEqual(ws.Cells["T24"].GetValue<int>(), 1);
                 Assert.AreEqual(ws.Cells["T24"].GetValue<int?>(), 1);
+#if NETCOREAPP3_0_OR_GREATER
+                Assert.AreEqual(ws.Cells["T24"].GetValue<double>(), 1.3961805555555555d);
+                Assert.AreEqual(ws.Cells["T24"].GetValue<double?>(), 1.3961805555555555d);
+#else
                 Assert.AreEqual(ws.Cells["T24"].GetValue<double>(), 1.39618055555556d);
                 Assert.AreEqual(ws.Cells["T24"].GetValue<double?>(), 1.39618055555556d);
+#endif
                 Assert.AreEqual(ws.Cells["T24"].GetValue<decimal>(), 1.39618055555556m);
                 Assert.AreEqual(ws.Cells["T24"].GetValue<decimal?>(), 1.39618055555556m);
                 Assert.AreEqual(ws.Cells["T24"].GetValue<bool>(), true);
@@ -1740,7 +1751,7 @@ namespace EPPlusTest
             Assert.IsTrue(exceptionThrown, "Exception thrown");
         }
 
-        //[Ignore]
+        [Ignore]
         [TestMethod]
         public void LoadText()
         {
@@ -3002,21 +3013,35 @@ namespace EPPlusTest
             Assert.AreEqual("Testing comment 2", ws1.Cells[3, 8].Comment.Text);
             Assert.AreEqual("test2", ws1.Cells[3, 8].Comment.Author);
         }
-        #endregion
+#endregion
+
+        private Task CultureIsolator(Action action)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    action();
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            thread.Start();
+            return tcs.Task;
+        }
 
         [TestMethod]
-        public void DateFunctionsWorkWithDifferentCultureDateFormats_US()
+        public async Task DateFunctionsWorkWithDifferentCultureDateFormats_US()
         {
-            var currentCulture = CultureInfo.CurrentCulture;
-#if Core
-            var us = CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
-#else
-            var us = CultureInfo.CreateSpecificCulture("en-US");
-            Thread.CurrentThread.CurrentCulture = us;
-#endif
-            double usEoMonth = 0d, usEdate = 0d;
-            var thread = new Thread(delegate ()
+            await CultureIsolator(() =>
             {
+                var currentCulture = CultureInfo.CurrentCulture;
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                double usEoMonth = 0d, usEdate = 0d;
                 using (var package = new ExcelPackage())
                 {
                     var ws = package.Workbook.Worksheets.Add("Sheet1");
@@ -3026,34 +3051,21 @@ namespace EPPlusTest
                     ws.Calculate();
                     usEoMonth = Convert.ToDouble(ws.Cells[2, 3].Value);
                     usEdate = Convert.ToDouble(ws.Cells[3, 3].Value);
-
                 }
+                Assert.AreEqual(41654.0, usEoMonth);
+                Assert.AreEqual(41670.0, usEdate);
+                Thread.CurrentThread.CurrentCulture = currentCulture;
             });
-            thread.Start();
-            thread.Join();
-            Assert.AreEqual(41654.0, usEoMonth);
-            Assert.AreEqual(41670.0, usEdate);
-#if Core
-            CultureInfo.DefaultThreadCurrentCulture = currentCulture;
-#else
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-#endif
         }
 
         [TestMethod]
-        public void DateFunctionsWorkWithDifferentCultureDateFormats_GB()
+        public async Task DateFunctionsWorkWithDifferentCultureDateFormats_GB()
         {
-            var currentCulture = CultureInfo.CurrentCulture;
-
-#if Core
-            var gb = CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-GB");
-#else
-            var gb = CultureInfo.CreateSpecificCulture("en-GB");
-            Thread.CurrentThread.CurrentCulture = gb;
-#endif
-            double gbEoMonth = 0d, gbEdate = 0d;
-            var thread = new Thread(delegate ()
+            await CultureIsolator(() =>
             {
+                var currentCulture = CultureInfo.CurrentCulture;
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
+                double gbEoMonth = 0d, gbEdate = 0d;
                 using (var package = new ExcelPackage())
                 {
                     var ws = package.Workbook.Worksheets.Add("Sheet1");
@@ -3064,16 +3076,10 @@ namespace EPPlusTest
                     gbEoMonth = Convert.ToDouble(ws.Cells[2, 3].Value);
                     gbEdate = Convert.ToDouble(ws.Cells[3, 3].Value);
                 }
+                Assert.AreEqual(41654.0, gbEoMonth);
+                Assert.AreEqual(41670.0, gbEdate);
+                Thread.CurrentThread.CurrentCulture = currentCulture;
             });
-            thread.Start();
-            thread.Join();
-            Assert.AreEqual(41654.0, gbEoMonth);
-            Assert.AreEqual(41670.0, gbEdate);
-#if Core
-            CultureInfo.DefaultThreadCurrentCulture = currentCulture;
-#else
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-#endif
         }
         [TestMethod]
         public void Text()
