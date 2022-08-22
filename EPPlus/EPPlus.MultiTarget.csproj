@@ -69,6 +69,7 @@
     <AssemblyOriginatorKeyFile>OpenOfficeXml.Rimland.snk</AssemblyOriginatorKeyFile>
     <NeutralLanguage />
     <PackageLicenseFile>lgpl-3.0.txt</PackageLicenseFile>
+	<NoWarn>$(NoWarn);CS1591;CS1572</NoWarn>
   </PropertyGroup>
  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
@@ -89,10 +90,6 @@
 
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\EPPlusFree.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
