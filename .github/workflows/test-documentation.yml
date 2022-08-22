@@ -19,7 +19,7 @@ jobs:
         working-directory: Doc
         run: dotnet build
       - name: Upload build artifacts
-        uses: action/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: Doc/Help
