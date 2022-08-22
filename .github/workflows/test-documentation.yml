@@ -16,10 +16,10 @@ jobs:
       - name: Install SHFB
         uses: Bassman2/setup-SHFB@9539b643a5f65125efa9365ab573bb75cdfd93fd
         with:
-          version: '2022.8.14.1'
+          version: v2021.4.9.0
       - name: Build documentation
         working-directory: Doc
-        run: dotnet build
+        run: msbuild EPPlusDoc.sln /p:configuration="Release" /m /verbosity:minimal
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
