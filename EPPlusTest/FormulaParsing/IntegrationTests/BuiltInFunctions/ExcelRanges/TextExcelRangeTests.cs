@@ -14,12 +14,12 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
     {
         private ExcelPackage _package;
         private ExcelWorksheet _worksheet;
-        private CultureInfo _currentCulture;
+        //private CultureInfo _currentCulture;
 
         [TestInitialize]
         public void Initialize()
         {
-            _currentCulture = CultureInfo.CurrentCulture;
+            //_currentCulture = CultureInfo.CurrentCulture;
             _package = new ExcelPackage();
             _worksheet = _package.Workbook.Worksheets.Add("Test");
 
@@ -32,7 +32,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
         public void Cleanup()
         {
             _package.Dispose();
-            Thread.CurrentThread.CurrentCulture = _currentCulture;
+            //Thread.CurrentThread.CurrentCulture = _currentCulture;
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
         [TestMethod]
         public void ValueShouldHandleScientificNotation()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             _worksheet.Cells["A1"].Value = "1.2345E-02";
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
@@ -127,7 +127,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
         [TestMethod]
         public void ValueShouldHandleDate()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             var date = new DateTime(2015, 12, 31);
             _worksheet.Cells["A1"].Value = date.ToString(CultureInfo.CurrentCulture);
             _worksheet.Cells["A4"].Formula = "Value(A1)";
@@ -139,7 +139,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
         [TestMethod]
         public void ValueShouldHandleTime()
         {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             var date = new DateTime(2015, 12, 31);
             var date2 = new DateTime(2015, 12, 31, 12, 00, 00);
             var ts = date2.Subtract(date);

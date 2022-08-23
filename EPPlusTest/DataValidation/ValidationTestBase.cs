@@ -36,13 +36,8 @@ namespace EPPlusTest.DataValidation
 
         protected string GetTestOutputPath(string fileName)
         {
-            return Path.Combine(
-#if (Core)
-            Path.GetTempPath()      //In Net.Core Output to TempPath 
-#else
-            Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
-#endif
-                , fileName);
+            //In Net.Core Output to TempPath 
+            return Path.Combine(Path.GetTempPath(), fileName);
         }
 
         protected void SaveTestOutput(string fileName)

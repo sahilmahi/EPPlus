@@ -69,12 +69,14 @@ namespace OfficeOpenXml.FormulaParsing.LexicalAnalysis
         }
         public Token Create(IEnumerable<Token> tokens, string token, string worksheet)
         {
+            if (tokens == null)
+                throw new ArgumentNullException(nameof(tokens));
             Token tokenSeparator = null;
             if (_tokenSeparatorProvider.Tokens.TryGetValue(token, out tokenSeparator))
             {
                 return tokenSeparator;
             }
-            var tokenList = (IList<Token>)tokens;
+            var tokenList = tokens.ToList();
             //Address with worksheet-string before  /JK
             if (token.StartsWith("!") && tokenList[tokenList.Count-1].TokenType == TokenType.String)
             {

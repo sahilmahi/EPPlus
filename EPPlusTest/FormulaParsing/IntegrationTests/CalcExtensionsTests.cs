@@ -8,7 +8,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests
     [TestClass]
     public class CalcExtensionsTests
     {
-        [TestMethod]
+        [TestMethod, Ignore]
         public void ShouldCalculateChainTest()
         {
             var package = new ExcelPackage(new FileInfo("c:\\temp\\chaintest.xlsx"));
