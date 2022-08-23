@@ -6,8 +6,6 @@ on:
   push:
     branches:
       - master
-      - develop
-      - fix_tests
 
 jobs:
   build:
@@ -35,3 +33,30 @@ jobs:
             out/*
       - name: Publish Nuget packages to GitHub registry
         run: dotnet nuget push "out/*" -k ${{secrets.GITHUB_TOKEN}}
+  builddocs:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup .NET Core SDKs
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x64
+      - name: Install SHFB
+        uses: Shane32/setup-SHFB@b90af4b4a53bb7972bce05a87f0f2c5adb5d95d2
+        with:
+          version: 2022.8.14.1
+      - name: Build project
+        run: dotnet build -c Release
+      - name: Build documentation
+        working-directory: Doc
+        run: msbuild EPPlusDoc.sln -t:rebuild -verbosity:minimal -property:Configuration=Release
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Documentation
+          path: Doc/Help

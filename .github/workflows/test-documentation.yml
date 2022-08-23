@@ -25,14 +25,11 @@ jobs:
           version: 2022.8.14.1
       - name: Build project
         run: dotnet build -c Release
-#      - name: Build documentation
-#        working-directory: Doc
-#        run: dotnet build -c Release
       - name: Build documentation
         working-directory: Doc
-        run: msbuild EPPlusDoc.sln -t:rebuild -verbosity:diag -property:Configuration=Release
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: docs
-          path: Doc/Help
+        run: msbuild EPPlusDoc.sln -t:rebuild -verbosity:minimal -property:Configuration=Release
+#      - name: Upload build artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Documentation
+#          path: Doc/Help
