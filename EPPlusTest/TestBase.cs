@@ -15,6 +15,14 @@ namespace EPPlusTest
         protected string _testInputPath = @"c:\epplusTest\workbooks\";
         public TestContext TestContext { get; set; }
         
+        public TestBase()
+        {
+            _worksheetPath = System.IO.Directory.GetCurrentDirectory();
+            if (!_worksheetPath.EndsWith(@"\"))
+                _worksheetPath += @"\";
+            _testInputPath = _worksheetPath;
+        }
+
         [TestInitialize]
         public void InitBase()
         {

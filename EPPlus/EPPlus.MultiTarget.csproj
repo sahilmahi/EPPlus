@@ -2,14 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;net35;net40</TargetFrameworks>
-    <AssemblyVersion>4.5.3.8</AssemblyVersion>
-    <FileVersion>4.5.3.8</FileVersion>
-    <Version>4.5.3.8</Version>
+    <VersionPrefix>4.5.4-preview</VersionPrefix>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageIcon>icon.jpg</PackageIcon>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/rimland/EPPlus</PackageProjectUrl>
 	  <Authors>Rimland</Authors>
+	<PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Company></Company>
     <Product>EPPlus Free Edition</Product>
 	<Title>Continuous Version of EPPlus Free Edition 4.5.3.3</Title>
@@ -69,6 +68,7 @@
     <AssemblyOriginatorKeyFile>OpenOfficeXml.Rimland.snk</AssemblyOriginatorKeyFile>
     <NeutralLanguage />
     <PackageLicenseFile>lgpl-3.0.txt</PackageLicenseFile>
+	<NoWarn>$(NoWarn);CS1591;CS1572</NoWarn>
   </PropertyGroup>
  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
@@ -89,10 +89,6 @@
 
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\EPPlusFree.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -162,5 +158,8 @@
       <PackagePath></PackagePath>
     </None>
 	<None Include="icon.jpg" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="'$(IsPackable)' == 'true'"/>
   </ItemGroup>
 </Project>

@@ -1,0 +1,31 @@
+name: Test code
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup .NET Core SDKs
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            2.1.x
+            3.1.x
+            5.0.x
+            6.0.x
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build solution [Debug]
+        run: dotnet build --no-restore -c Debug
+      - name: Test solution [Debug]
+        run: dotnet test --no-restore --no-build

@@ -68,9 +68,7 @@ namespace EPPlusTest
         [TestMethod]
         public void EvaluateShouldHandleDateArg()
         {
-            #if (!Core)
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            #endif
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var result = _evaluator.Evaluate(new DateTime(2016,6,28), "2016-06-28");
             Assert.IsTrue(result);
         }
@@ -78,9 +76,7 @@ namespace EPPlusTest
         [TestMethod]
         public void EvaluateShouldHandleDateArgWithOperator()
         {
-#if (!Core)
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-#endif
+            //Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var result = _evaluator.Evaluate(new DateTime(2016, 6, 28), ">2016-06-27");
             Assert.IsTrue(result);
         }
