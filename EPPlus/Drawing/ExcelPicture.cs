@@ -64,9 +64,9 @@ namespace OfficeOpenXml.Drawing
                 Part = drawings.Part.Package.GetPart(UriPic);
                 FileInfo f = new FileInfo(UriPic.OriginalString);
                 ContentType = GetContentType(f.Extension);
-                _image = Image.FromStream(Part.GetStream());
-
-                var iby = ImageToByteArray(_image);
+                var iby = Part.GetStream().ToArray();
+                var ms = new MemoryStream(iby);
+                _image = Image.FromStream(ms);
                 var ii = _drawings._package.LoadImage(iby, UriPic, Part);
                 ImageHash = ii.Hash;
 
@@ -124,7 +124,8 @@ namespace OfficeOpenXml.Drawing
             var package = drawings.Worksheet._package.Package;
             ContentType = GetContentType(imageFile.Extension);
             var imagestream = new FileStream(imageFile.FullName, FileMode.Open, FileAccess.Read);
-            _image = Image.FromStream(imagestream);
+            var image = Image.FromStream(imagestream);
+            _image = image;
 
             var img = ImageToByteArray(_image);
 
@@ -147,9 +148,9 @@ namespace OfficeOpenXml.Drawing
                 UriPic = UriHelper.ResolvePartUri(rel.SourceUri, rel.TargetUri);
             }
             ImageHash = ii.Hash;
-            _height = Image.Height;
-            _width = Image.Width;
-            SetPosDefaults(Image);
+            _height = image.Height;
+            _width = image.Width;
+            SetPosDefaults(image);
             //Create relationship
             node.SelectSingleNode("xdr:pic/xdr:blipFill/a:blip/@r:embed", NameSpaceManager).Value = relID;
             package.Flush();
@@ -306,7 +307,7 @@ namespace OfficeOpenXml.Drawing
         }
 
         internal string ImageHash { get; set; }
-        Image _image = null;
+        private Image _image = null;
         /// <summary>
         /// The Image
         /// </summary>
