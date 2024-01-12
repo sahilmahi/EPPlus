@@ -46,9 +46,6 @@ namespace OfficeOpenXml.Drawing
     /// <summary>
     /// An image object
     /// </summary>
-#if NET6_0_OR_GREATER
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-#endif
     public sealed class ExcelPicture : ExcelDrawing
     {
         #region "Constructors"
@@ -64,10 +61,8 @@ namespace OfficeOpenXml.Drawing
                 Part = drawings.Part.Package.GetPart(UriPic);
                 FileInfo f = new FileInfo(UriPic.OriginalString);
                 ContentType = GetContentType(f.Extension);
-                var iby = Part.GetStream().ToArray();
-                var ms = new MemoryStream(iby);
-                _image = Image.FromStream(ms);
-                var ii = _drawings._package.LoadImage(iby, UriPic, Part);
+                _imageBytes = Part.GetStream().ToArray();
+                var ii = _drawings._package.LoadImage(_imageBytes, UriPic, Part);
                 ImageHash = ii.Hash;
 
                 //_height = _image.Height;
@@ -88,6 +83,10 @@ namespace OfficeOpenXml.Drawing
                 }
             }
         }
+
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         internal ExcelPicture(ExcelDrawings drawings, XmlNode node, Image image, Uri hyperlink) :
             base(drawings, node, "xdr:pic/xdr:nvPicPr/xdr:cNvPr/@name")
         {
@@ -100,6 +99,7 @@ namespace OfficeOpenXml.Drawing
 
             var package = drawings.Worksheet._package.Package;
             //Get the picture if it exists or save it if not.
+            _imageBytes = ImageToByteArray(image);
             _image = image;
             string relID = SavePicture(image);
 
@@ -110,6 +110,9 @@ namespace OfficeOpenXml.Drawing
             SetPosDefaults(image);
             package.Flush();
         }
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         internal ExcelPicture(ExcelDrawings drawings, XmlNode node, FileInfo imageFile, Uri hyperlink) :
             base(drawings, node, "xdr:pic/xdr:nvPicPr/xdr:cNvPr/@name")
         {
@@ -123,13 +126,14 @@ namespace OfficeOpenXml.Drawing
             //Changed to stream 2/4-13 (issue 14834). Thnx SClause
             var package = drawings.Worksheet._package.Package;
             ContentType = GetContentType(imageFile.Extension);
-            var imagestream = new FileStream(imageFile.FullName, FileMode.Open, FileAccess.Read);
-            var image = Image.FromStream(imagestream);
-            _image = image;
-
-            var img = ImageToByteArray(_image);
-
-            imagestream.Close();
+            var imagestream1 = new FileStream(imageFile.FullName, FileMode.Open, FileAccess.Read);
+            var imageStream2 = new MemoryStream();
+            CopyStream(imagestream1, imageStream2);
+            imagestream1.Close();
+            var img = imageStream2.ToArray();
+            imageStream2.Position = 0;
+            var image = Image.FromStream(imageStream2);
+            _imageBytes = img;
             UriPic = GetNewUri(package, "/xl/media/{0}" + imageFile.Name);
             var ii = _drawings._package.AddImage(img, UriPic, ContentType);
             string relID;
@@ -148,6 +152,7 @@ namespace OfficeOpenXml.Drawing
                 UriPic = UriHelper.ResolvePartUri(rel.SourceUri, rel.TargetUri);
             }
             ImageHash = ii.Hash;
+            _image = image;
             _height = image.Height;
             _width = image.Width;
             SetPosDefaults(image);
@@ -156,6 +161,19 @@ namespace OfficeOpenXml.Drawing
             package.Flush();
         }
 
+        private static void CopyStream(Stream from, Stream to)
+        {
+#if NET35
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = from.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                to.Write(buffer, 0, read);
+            }
+#else
+            from.CopyTo(to);
+#endif
+        }
         internal static string GetContentType(string extension)
         {
             switch (extension.ToLower(CultureInfo.InvariantCulture))
@@ -189,6 +207,9 @@ namespace OfficeOpenXml.Drawing
 
             }
         }
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         internal static ImageFormat GetImageFormat(string contentType)
         {
             switch (contentType.ToLower(CultureInfo.InvariantCulture))
@@ -264,6 +285,9 @@ namespace OfficeOpenXml.Drawing
 
             return RelPic.Id;
         }
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         private void SetPosDefaults(Image image)
         {
             EditAs = eEditAs.OneCell;
@@ -307,21 +331,46 @@ namespace OfficeOpenXml.Drawing
         }
 
         internal string ImageHash { get; set; }
+        private byte[] __imageBytes = null;
+        private byte[] _imageBytes
+        {
+            get
+            {
+                return __imageBytes;
+            }
+            set
+            {
+                __imageBytes = value;
+#pragma warning disable CA1416 // Validate platform compatibility
+                _image?.Dispose();
+#pragma warning restore CA1416 // Validate platform compatibility
+                _image = null;
+            }
+        }
         private Image _image = null;
         /// <summary>
         /// The Image
         /// </summary>
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         public Image Image 
         {
             get
             {
+                if (_image == null)
+                {
+                    _image = Image.FromStream(new MemoryStream(_imageBytes));
+                }
                 return _image;
             }
             set
             {
                 if (value != null)
                 {
-                    _image = value;
+                    _image?.Dispose();
+                    _image = null;
+                    _imageBytes = ImageToByteArray(value);
                     try
                     {
                         string relID = SavePicture(value);
@@ -337,15 +386,32 @@ namespace OfficeOpenXml.Drawing
                 }
             }
         }
-        ImageFormat _imageFormat=ImageFormat.Jpeg;
+        public void SaveImageTo(Stream stream)
+        {
+            if (__imageBytes != null)
+                stream.Write(__imageBytes, 0, __imageBytes.Length);
+        }
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
+        private ImageFormat _imageFormat = null;
+        private bool _imageFormatSet = false;
         /// <summary>
         /// Image format
         /// If the picture is created from an Image this type is always Jpeg
         /// </summary>
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         public ImageFormat ImageFormat
         {
             get
             {
+                if (!_imageFormatSet)
+                {
+                    _imageFormat = ImageFormat.Jpeg;
+                    _imageFormatSet = true;
+                }
                 return _imageFormat;
             }
             internal set
@@ -363,6 +429,9 @@ namespace OfficeOpenXml.Drawing
         /// Note that resizing columns / rows after using this function will effect the size of the picture
         /// </summary>
         /// <param name="Percent">Percent</param>
+#if NET6_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
         public override void SetSize(int Percent)
         {
             if(Image == null)
@@ -441,7 +510,9 @@ namespace OfficeOpenXml.Drawing
         {
             base.Dispose();
             _hyperlink = null;
-            _image.Dispose();
+#pragma warning disable CA1416 // Validate platform compatibility
+            _image?.Dispose();
+#pragma warning restore CA1416 // Validate platform compatibility
             _image = null;            
         }
     }
