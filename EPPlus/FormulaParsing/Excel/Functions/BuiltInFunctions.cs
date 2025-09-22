@@ -193,6 +193,7 @@ namespace OfficeOpenXml.FormulaParsing.Excel.Functions
             Functions["networkdays.intl"] = new NetworkdaysIntl();
             Functions["datevalue"] = new DateValue();
             Functions["timevalue"] = new TimeValue();
+            Functions["datedif"] = new DateDif();
             // Database
             Functions["dget"] = new Dget();
             Functions["dcount"] = new Dcount();

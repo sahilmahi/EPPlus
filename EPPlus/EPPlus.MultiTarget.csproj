@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0;netcoreapp3.1;net35;net40;net6.0;net8.0</TargetFrameworks>
-    <VersionPrefix>4.5.4-preview</VersionPrefix>
+    <VersionPrefix>4.5.4-beta</VersionPrefix>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageIcon>icon.jpg</PackageIcon>
     <PackageLicenseUrl></PackageLicenseUrl>
@@ -12,31 +12,18 @@
     <Company></Company>
     <Product>EPPlus LGPL Edition</Product>
 	<Title>Updated Version of EPPlus 4.5.3.3</Title>
-    <Description>EPPlus-LGPL is an unofficial EPPlus library which includes bug fixes beyond EPPlus 4.5.3.3 including support for .NET 6+.</Description>
-    <AssemblyName>EPPlus-LGPL</AssemblyName>
+    <Description>An extensions library for EPPlus package.</Description>
+    <AssemblyName>EPPlusCore.Extras</AssemblyName>
     <RootNamespace>OfficeOpenXml</RootNamespace>
     <RepositoryUrl></RepositoryUrl>
     <PackageTags>EPPlus Excel Spreadsheet xlsx ooxml</PackageTags>
     <Copyright>Copyright (c) 2011 Jan Källman, et al</Copyright>
 	<DebugType>embedded</DebugType>
     <PackageReleaseNotes>
-		4.5.3.13
-		* Fix compatibility with ASP.NET Core 2.1
+		4.5.4
+		* Added DATEDIF formula
 
-		4.5.3.11
-		* Added support for AutoFit on .NET 6+ on Linux using font metrics collected from a Windows PC
-
-		4.5.3.10
-		* Added additional compliation targets including .NET 6 and .NET 8; reduced dependencies
-
-		4.5.3.9
-		* Fixed recalculating on .NET Framework; support Source Link debugging
-
-		4.5.3.8
-		* Fixed the bug of address of ExcelNamedRange in ExcelNamedRangeCollection and Cell of ExcelSparkline in ExcelNamedRangeCollection when inserting row or column in ExcelWorksheet.
-
-		4.5.3.7
-		* Modify ExcelSparkline to support named data range.
+		Changes in versions earlier than 4.5.3.13 see this link https://github.com/Shane32/EPPlus/blob/master/README.md
 
 		Changes in versions earlier than 4.5.3.3 see this link https://github.com/JanKallman/EPPlus/blob/master/EPPlus/readme.txt .
 	</PackageReleaseNotes>
