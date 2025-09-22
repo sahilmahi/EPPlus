@@ -103,6 +103,7 @@ apt-get install libgdiplus
 EPPlus-A .NET Spreadsheet API
 
 ## Changes since 4.0
+
 4.5.4
 * Added DATEDIF formula
 
