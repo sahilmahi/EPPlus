@@ -20,6 +20,9 @@
     <Copyright>Copyright (c) 2011 Jan Källman, et al</Copyright>
 	<DebugType>embedded</DebugType>
     <PackageReleaseNotes>
+		4.5.4
+		* Added DATEDIF formula
+
 		4.5.3.13
 		* Fix compatibility with ASP.NET Core 2.1
 
